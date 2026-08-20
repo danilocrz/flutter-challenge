@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_dev_flutter/cubit/census_name_cubit.dart';
 import 'package:teste_dev_flutter/cubit/census_name_state.dart';
 import 'package:teste_dev_flutter/pages/home/widgets/census_name_card.dart';
+import 'package:teste_dev_flutter/routes/app_routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -71,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                                   onTap: () {
                                     Navigator.pushNamed(
                                       context,
-                                      '/detail',
+                                      AppRoutes.detail,
                                       arguments: censusName,
                                     );
                                   },

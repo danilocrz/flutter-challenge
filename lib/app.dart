@@ -4,6 +4,7 @@ import 'package:teste_dev_flutter/core/services/census_name_service.dart';
 import 'package:teste_dev_flutter/cubit/census_name_cubit.dart';
 import 'package:teste_dev_flutter/pages/details/details_page.dart';
 import 'package:teste_dev_flutter/pages/home/home_page.dart';
+import 'package:teste_dev_flutter/routes/app_routes.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -22,8 +23,11 @@ class App extends StatelessWidget {
             foregroundColor: Colors.white,
           ),
         ),
-        initialRoute: '/',
-        routes: {'/': (_) => const HomePage(), '/detail': (_) => DetailsPage()},
+        initialRoute: AppRoutes.home,
+        routes: {
+          AppRoutes.home: (_) => const HomePage(),
+          AppRoutes.detail: (_) => DetailsPage(),
+        },
       ),
     );
   }
