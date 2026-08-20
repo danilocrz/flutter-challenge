@@ -34,69 +34,87 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controllerName,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  onPressed: _buscar,
-                  icon: Icon(Icons.search),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 600),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _controllerName,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Digite um nome...',
+                        suffixIcon: IconButton(
+                          onPressed: _buscar,
+                          icon: Icon(Icons.search),
+                        ),
+                      ),
+                      onSubmitted: (_) => _buscar(),
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: BlocBuilder<CensusNameCubit, CensusNameState>(
+                        builder: (context, state) {
+                          if (state is CensusNameLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is CensusNameLoaded) {
+                            return ListView.builder(
+                              itemCount: state.names.length,
+                              itemBuilder: (context, index) {
+                                final censusName = state.names[index];
+                                return CensusNameCard(
+                                  name: censusName,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/detail',
+                                      arguments: censusName,
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          } else if (state is CensusNameError) {
+                            return Center(
+                              child: Text(
+                                state.message,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            );
+                          }
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person_search,
+                                  size: 64,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 15),
+                                Text(
+                                  'Digite um nome para buscar',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              onSubmitted: (_) => _buscar(),
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: BlocBuilder<CensusNameCubit, CensusNameState>(
-                builder: (context, state) {
-                  if (state is CensusNameLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is CensusNameLoaded) {
-                    return ListView.builder(
-                      itemCount: state.names.length,
-                      itemBuilder: (context, index) {
-                        final censusName = state.names[index];
-                        return CensusNameCard(
-                          name: censusName,
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/detail',
-                              arguments: censusName,
-                            );
-                          },
-                        );
-                      },
-                    );
-                  } else if (state is CensusNameError) {
-                    return Center(
-                      child: Text(
-                        state.message,
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    );
-                  }
-                  return Center(
-                    child: Column(
-                      children: [
-                        Icon(Icons.person_search, size: 64, color: Colors.grey),
-                        SizedBox(height: 15),
-                        Text(
-                          'Digite um nome para buscar',
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

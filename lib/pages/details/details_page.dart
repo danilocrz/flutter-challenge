@@ -12,38 +12,33 @@ class DetailsPage extends StatelessWidget {
         title: Text(census.name, style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 600;
+
+          final summaryCard = Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInfo('Nome', census.name),
+                  _buildInfo('Sexo', census.gender ?? 'Não informado'),
+                  _buildInfo('Localidade', census.locality),
+                  _buildInfo('Períodos', '${census.periods.length} décadas'),
+                ],
+              ),
+            ),
+          );
+
+          final periodsList = Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 2. Card de resumo
-              Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildInfo('Nome', census.name),
-                      _buildInfo('Sexo', census.gender ?? 'Não informado'),
-                      _buildInfo('Localidade', census.locality),
-                      _buildInfo(
-                        'Períodos',
-                        '${census.periods.length} décadas',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 24),
-              // 3. Título da seção de períodos
               Text(
                 'Frequência por Década',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              // 4. Lista de períodos
               ...census.periods.map(
                 (period) => Card(
                   child: ListTile(
@@ -56,8 +51,25 @@ class DetailsPage extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
+          );
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.all(16),
+            child: isWide
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 2, child: summaryCard),
+                      SizedBox(width: 16),
+                      Expanded(flex: 3, child: periodsList),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [summaryCard, SizedBox(height: 24), periodsList],
+                  ),
+          );
+        },
       ),
     );
   }
